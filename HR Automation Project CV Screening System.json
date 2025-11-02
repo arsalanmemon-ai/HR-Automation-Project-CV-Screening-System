@@ -1,0 +1,984 @@
+{
+  "name": "HR Automation Project CV Screening System",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d8110c04-01ca-4dc9-92a5-67ffa676e34c",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        8,
+        560
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TI8Q08Xxyk73j2EE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Candidate Lists').item.json.Email }}",
+        "subject": "Confirmation of Application\n",
+        "emailType": "text",
+        "message": "=Hello {{ $('Application Form').item.json['Full Name'] }},\n\nThank you for applying for the position of {{ $('Candidate Lists').item.json['Applied Post'] }} at Suleman Roshan Medical College.\n\nWe have successfully received your application.\n\nApplication ID: {{ $('Candidate Lists').item.json['Unique ID'] }}\nOur HR department will review your CV and contact you, if your profile matches our requirements.\n\nPlease keep your phone and email active for any further communication.\n\nBest wishes,\nHR Department\nSuleman Roshan Medical College\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b6db44f3-463a-42e4-baab-def43dbc8f7a",
+      "name": "Confirmation of CV Submission",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1184,
+        72
+      ],
+      "webhookId": "954756dc-2946-4b78-b208-06f3df612ab5",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "c13ZRjQljuRRRRNY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "arsalanmuhammad836@gmail.com",
+        "subject": "=New Candidate CV  {{ $json.Name }}",
+        "emailType": "text",
+        "message": "=Hello HR,\n\nApplication ID: {{ $json['Unique ID'] }}\n\nA new CV has been successfully received in our system. Please review the candidate's details at your earliest convenience.\n\n\nCandidate Name: {{ $('Application Form').item.json['Full Name'] }}\nCandidate Applied Post: {{ $('Application Form').item.json['Applied Post'] }}\nCandidate Email: {{ $('Application Form').item.json['Email'] }}\nCandidate Summary: {{ $json.Summary }}\n\nThank you,\nAutomated CV Screening\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c297e2a5-fa99-44ce-a574-0ca412f9a477",
+      "name": "Inform HR New CV Received",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        960,
+        168
+      ],
+      "webhookId": "e969a9f5-631b-4719-a4f6-87e6063cef6a",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "c13ZRjQljuRRRRNY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "AIMessagePromptTemplate",
+              "message": "give me short summry in 3 lines"
+            }
+          ]
+        }
+      },
+      "id": "7b909c22-70f9-4793-a978-1d72882bc451",
+      "name": "Using AI Analysis & Rating",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        -64,
+        336
+      ],
+      "typeVersion": 1.5
+    },
+    {
+      "parameters": {
+        "formTitle": "Job Application Form",
+        "formDescription": "Welcome to SRMC Job Portal",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "S/o D/o W/o",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Qualification",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Other Qualification",
+              "placeholder": "Diploma - Short Course etc"
+            },
+            {
+              "fieldLabel": "Applied Post",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Computer Operator"
+                  },
+                  {
+                    "option": "Lab Technician"
+                  },
+                  {
+                    "option": "Office Boy"
+                  },
+                  {
+                    "option": "Security Guard"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Resume/CV",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Comments"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ca347770-3e4c-4a93-9f5c-62001f7b4055",
+      "name": "Application Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        -736,
+        176
+      ],
+      "webhookId": "0cd422d3-e69f-4ec0-92ab-05362808c4da",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI",
+          "mode": "list",
+          "cachedResultName": "HR CV Record",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Application Form').item.json['Full Name'] }}",
+            "S/o": "={{ $('Application Form').item.json['S/o D/o W/o'] }}",
+            "last Qualification": "={{ $('Application Form').item.json['Last Qualification'] }}",
+            "Other Qualification": "={{ $('Application Form').item.json['Other Qualification'] }}",
+            "Applied Post": "={{ $('Application Form').item.json['Applied Post'] }}",
+            "Email": "={{ $('Application Form').item.json.Email }}",
+            "Summary": "={{ $json.text }}",
+            "Date": "={{ $('Application Form').item.json.Date }}",
+            "Employee Comments": "={{ $('Application Form').item.json.Comments }}",
+            "Unique ID": "={{ $json['Unique ID'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Unique ID",
+              "displayName": "Unique ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "HR Received",
+              "displayName": "HR Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Candidate Received",
+              "displayName": "Candidate Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "S/o",
+              "displayName": "S/o",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last Qualification",
+              "displayName": "last Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Other Qualification",
+              "displayName": "Other Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Applied Post",
+              "displayName": "Applied Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee Comments",
+              "displayName": "Employee Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "08774956-9420-4259-b3b4-cdb5e3f5ece7",
+      "name": "Candidate Lists",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        736,
+        168
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WFJgCBPruYOkC7j6",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "Your_Resume_CV",
+        "name": "={{ $json[\"Your Resume/CV\"].filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1y5aDv1p4mEYgZGMh-fjFGY_nI3FTTXGr",
+          "mode": "list",
+          "cachedResultName": "SRMC CV",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1y5aDv1p4mEYgZGMh-fjFGY_nI3FTTXGr"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -288,
+        144
+      ],
+      "id": "dd0d2156-c880-4817-9253-2a1d22880d91",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NGHS4AEHQS1utZS4",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a80cbb95-da20-4b2a-8fbf-c7ac4be6cdba",
+              "leftValue": "={{ $json[\"Your Resume/CV\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        240
+      ],
+      "id": "3a5c403b-28e0-4e59-9db2-1b77b244ef6d",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Your_Resume_CV",
+        "options": {}
+      },
+      "id": "a432c9df-2a4c-426c-8ce9-103bf10d13ef",
+      "name": "Convert Binary to Json",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        -288,
+        336
+      ],
+      "retryOnFail": false,
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI",
+          "mode": "list",
+          "cachedResultName": "HR CV Record",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Application Form').item.json.Email }}",
+            "HR Received": "Yes"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Unique ID",
+              "displayName": "Unique ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "HR Received",
+              "displayName": "HR Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Candidate Received",
+              "displayName": "Candidate Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "S/o",
+              "displayName": "S/o",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last Qualification",
+              "displayName": "last Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Other Qualification",
+              "displayName": "Other Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Applied Post",
+              "displayName": "Applied Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Employee Comments",
+              "displayName": "Employee Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        264
+      ],
+      "id": "95c48ae6-0a95-4aa8-b67d-6e11de6487c7",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WFJgCBPruYOkC7j6",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI",
+          "mode": "list",
+          "cachedResultName": "HR CV Record",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Tu5AYzwDhRJoLNUXKztL4Ep071P0cqSnDq7yW_Vi1rI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Application Form').item.json.Email }}",
+            "Candidate Received": "Yes"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "HR Received",
+              "displayName": "HR Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Candidate Received",
+              "displayName": "Candidate Received",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "S/o",
+              "displayName": "S/o",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last Qualification",
+              "displayName": "last Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Other Qualification",
+              "displayName": "Other Qualification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Applied Post",
+              "displayName": "Applied Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Employee Comments",
+              "displayName": "Employee Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        72
+      ],
+      "id": "1045345d-5cb1-411e-871a-f136f1689466",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WFJgCBPruYOkC7j6",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"Unique ID\": \"{{ 'SRMC-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + Math.floor(Math.random()*1000) }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "daded085-e060-492b-804e-d65322724b12",
+      "name": "Unique ID"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        288,
+        168
+      ],
+      "id": "835c90d8-2538-4716-9d7f-17182b312e99",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba94dec1-74de-4f5d-b837-7d99678a50df",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "08e828c3-c908-45c9-b4e9-80f0de7084c5",
+              "name": "Unique ID",
+              "value": "={{$items(\"Unique ID\")[0].json[\"Unique ID\"]}}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        168
+      ],
+      "id": "5d2ac053-1cd7-4614-b5b2-3687e24ebd3f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Candidate Lists": {
+      "main": [
+        [
+          {
+            "node": "Inform HR New CV Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Application Form": {
+      "main": [
+        [
+          {
+            "node": "Unique ID",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Using AI Analysis & Rating",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inform HR New CV Received": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Confirmation of CV Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Using AI Analysis & Rating": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert Binary to Json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Binary to Json": {
+      "main": [
+        [
+          {
+            "node": "Using AI Analysis & Rating",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmation of CV Submission": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unique ID": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Candidate Lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e04f519c-14e2-4f16-9d99-442ab0fc9719",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7c2d36da011cea2f2c21753cd205669a2de9e01da154d274f2b35aceaa1ba6ae"
+  },
+  "id": "hFCPWVjiUX6soLjP",
+  "tags": []
+}
